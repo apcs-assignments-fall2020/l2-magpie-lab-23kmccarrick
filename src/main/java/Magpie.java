@@ -33,23 +33,30 @@ public class Magpie
     public String getResponse(String statement)
     {
         String response = "";
-        if (statement.findWord("no",statement) >= 0)
+        if (findWord(statement, "no") >= 0)
         {
             response = "Why so negative?";
         }
-        else if (statement.findWord("mother",statement) >= 0
-                || statement.findWord("father",statement) >= 0
-                || statement.findWord("sister",statement) >= 0
-                || statement.findWord("brother",statement) >= 0)
+        else if (findWord(statement, "mother") >= 0
+                || findWord(statement, "father") >= 0
+                || findWord(statement, "sister") >= 0
+                || findWord(statement, "brother") >= 0)
         {
             response = "Tell me more about your family.";
-        }else if (statement.findWord("cat",statement)>=0||statement.findWord("dog",statement)>=0){
+        }else if (findWord("cat",statement)>=0||findWord("dog",statement)>=0){
             response = "Tell me more about your pets";
         }else if (statement.trim().length()<1){
             response = "Say something, please.";
         }
-        else
-        {
+        else if (findWord(statement,"I want to")>=0){
+            response = transformIWantToStatement(statement);
+        }else if (findWord(statement, "I want")>=0){
+            response = transformIWantStatement(statement);
+        }else if (findWord(statement,"I")>=0&&findWord(statement,"you")>=0&&findWord(statement,"I")<findWord(statement,"you")){
+            response = transformIYouStatement(statement);
+        }else if (findWord(statement,"you")>=0&&findWord(statement,"me")>=0&&findWord(statement,"you")<findWord(statement,"me")){
+            response = transformYouMeStatement(statement);
+        }else{
             response = getRandomResponse();
         }
         return response;
@@ -96,19 +103,10 @@ public class Magpie
     // The method returns the index of the first character in word
     // if it is found, and returns -1 otherwise. 
     public int findWord(String str, String word) {
-        str = str.toLowerCase();
-        int slen = str.length();
-        int wlen = word.length();
-        if(slen<wlen)
-            return -1;
-        else if (slen==wlen)
-            return str.indexOf(word);
-        else if (str.indexOf(word)==0&&str.substring(wlen,wlen+1)==" ")
-            return 0;
-        else if (str.indexOf(word)==slen-wlen&&str.substring(slen-wlen-1,slen-wlen)==" ")
-            return str.indexOf(word);
-        else
-            return str.indexOf(word);
+    str = " " + str.toLowerCase() + " ";
+    word = " " + word.toLowerCase() + " ";
+
+    return str.indexOf(word);
     }
 
     
@@ -122,8 +120,7 @@ public class Magpie
      */
     public String transformIWantStatement(String statement)
     {
-        //your code here
-        return "";
+        return "Would you really be happy if you had " +statement.substring(statement.indexOf("I want ")+7,statement.length())+"?";
     }
 
     /**
@@ -134,8 +131,8 @@ public class Magpie
      */
     public String transformIYouStatement(String statement)
     {
-        //your code here
-        return "";
+        
+        return "Why do you "+statement.substring(findWord(statement,"I")+2,findWord(statement,"you"))+"me?";
     }
 
     /**
@@ -147,7 +144,7 @@ public class Magpie
     public String transformIWantToStatement(String statement)
     {
         // your code here
-        return "";
+        return "What would it mean to " + statement.substring(statement.indexOf("I want to ")+10, statement.length())+"?";
     }
 
 
@@ -162,6 +159,6 @@ public class Magpie
     public String transformYouMeStatement(String statement)
     {
         // your code here
-        return "";
+        return "What makes you think that I" + statement.substring(findWord(statement,"you")+3,findWord(statement,"me"))+"you?";
     }
 }
