@@ -1,3 +1,5 @@
+import java.sql.Statement;
+
 /**
  * A program to carry on conversations with a human user.
  * This is the initial version that:  
@@ -31,16 +33,20 @@ public class Magpie
     public String getResponse(String statement)
     {
         String response = "";
-        if (statement.indexOf("no") >= 0)
+        if (statement.findWord("no",statement) >= 0)
         {
             response = "Why so negative?";
         }
-        else if (statement.indexOf("mother") >= 0
-                || statement.indexOf("father") >= 0
-                || statement.indexOf("sister") >= 0
-                || statement.indexOf("brother") >= 0)
+        else if (statement.findWord("mother",statement) >= 0
+                || statement.findWord("father",statement) >= 0
+                || statement.findWord("sister",statement) >= 0
+                || statement.findWord("brother",statement) >= 0)
         {
             response = "Tell me more about your family.";
+        }else if (statement.findWord("cat",statement)>=0||statement.findWord("dog",statement)>=0){
+            response = "Tell me more about your pets";
+        }else if (statement.trim().length()<1){
+            response = "Say something, please.";
         }
         else
         {
@@ -90,7 +96,19 @@ public class Magpie
     // The method returns the index of the first character in word
     // if it is found, and returns -1 otherwise. 
     public int findWord(String str, String word) {
-        return -1;
+        str = str.toLowerCase();
+        int slen = str.length();
+        int wlen = word.length();
+        if(slen<wlen)
+            return -1;
+        else if (slen==wlen)
+            return str.indexOf(word);
+        else if (str.indexOf(word)==0&&str.substring(wlen,wlen+1)==" ")
+            return 0;
+        else if (str.indexOf(word)==slen-wlen&&str.substring(slen-wlen-1,slen-wlen)==" ")
+            return str.indexOf(word);
+        else
+            return str.indexOf(word);
     }
 
     
